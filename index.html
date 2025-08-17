@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nicolas - Portfólio Minimalista</title>
+    <!-- Inclui a fonte Lato do Google Fonts, uma fonte limpa e moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Inclui a biblioteca de ícones Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inclui a biblioteca 3D Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Inclui o framework CSS Tailwind CSS para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define as cores personalizadas off-white e blackish para o tema escuro */
+        body {
+            --color-primary: #f5f5f5; /* Off-white */
+            --color-secondary: #111111; /* Blackish */
+            font-family: 'Lato', sans-serif;
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Estilos para o modo claro, invertendo as cores */
+        body.light-mode {
+            --color-primary: #111111;
+            --color-secondary: #f5f5f5;
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+        }
+
+        /* Estilos para elementos específicos que mudam de cor */
+        .header-bg {
+            background-color: rgba(17, 17, 17, 0.8);
+        }
+        .light-mode .header-bg {
+            background-color: rgba(245, 245, 245, 0.8);
+        }
+        
+        .section-divider {
+            height: 1px;
+            background-color: var(--color-primary);
+            opacity: 0.2;
+        }
+
+        /* Classe para o fundo dos cards no modo escuro */
+        .card-bg {
+            background-color: #1a1a1a;
+        }
+        /* Classe para o fundo dos cards no modo claro */
+        .light-mode .card-bg {
+            background-color: #e0e0e0;
+        }
+
+        /* Animação para o card ao passar o mouse */
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilo para a transição suave de cores dos links */
+        a {
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #d4d4dc; /* Cor sutil de hover para o modo escuro */
+        }
+        .light-mode a:hover {
+            color: #4b5563; /* Cor sutil de hover para o modo claro */
+        }
+
+        /* O canvas 3D cobre o fundo da página, com um z-index baixo */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* O conteúdo do site fica por cima do canvas 3D */
+        .content-container {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Canvas para a ambientação 3D de fundo -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Container para todo o conteúdo do site, garantindo que ele fique sobre o canvas -->
+    <div class="content-container">
+
+        <!-- Navegação (Header) -->
+        <header class="sticky top-0 left-0 w-full z-50 backdrop-blur-md header-bg shadow-md">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <a href="#hero" class="text-3xl font-bold">NICOLAS</a>
+                <div class="space-x-8 hidden md:flex items-center">
+                    <a href="#about" class="hover:text-gray-400">Sobre Mim</a>
+                    <a href="#what-i-do" class="hover:text-gray-400">O que eu faço?</a>
+                    <a href="#skills" class="hover:text-gray-400">Habilidades</a>
+                    <a href="#contact" class="hover:text-gray-400">Contato</a>
+                    <!-- Botão para alternar modo claro/escuro -->
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-800 transition-colors duration-300 focus:outline-none">
+                        <i id="theme-icon" class="fas fa-moon text-gray-400"></i>
+                    </button>
+                </div>
+                <!-- Menu de hambúrguer para dispositivos móveis -->
+                <button id="menu-button" class="md:hidden text-xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+            <!-- Menu mobile que será exibido/ocultado com JavaScript -->
+            <div id="mobile-menu" class="hidden md:hidden bg-opacity-90 text-center py-4 space-y-4 header-bg">
+                <a href="#about" class="block py-2 hover:text-gray-400">Sobre Mim</a>
+                <a href="#what-i-do" class="block py-2 hover:text-gray-400">O que eu faço?</a>
+                <a href="#skills" class="block py-2 hover:text-gray-400">Habilidades</a>
+                <a href="#contact" class="block py-2 hover:text-gray-400">Contato</a>
+                <button id="mobile-theme-toggle" class="block mx-auto py-2 hover:text-gray-400 focus:outline-none">
+                    <i id="mobile-theme-icon" class="fas fa-moon text-gray-400 mr-2"></i> Alterar Tema
+                </button>
+            </div>
+        </header>
+
+        <!-- Seção Principal (Hero) -->
+        <section id="hero" class="min-h-screen flex items-center justify-center p-8 text-center">
+            <div class="max-w-4xl mx-auto space-y-4">
+                <h1 class="text-6xl md:text-8xl font-light">
+                    <span class="font-bold block">NICOLAS</span>
+                    <span class="text-xl md:text-3xl tracking-widest uppercase">UX/UI Design & Developer</span>
+                </h1>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-6 section-divider"></div>
+
+        <!-- Seção Sobre Mim -->
+        <section id="about" class="py-20 md:py-32">
+            <div class="container mx-auto px-6 text-center">
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <h2 class="text-4xl font-bold">Sobre Mim</h2>
+                    <p class="text-lg leading-relaxed">
+                        Olá! Sou Nicolas, um profissional criativo e multifacetado, com uma paixão em transformar ideias em realidade visual. Minha jornada no mundo do design e da tecnologia começou com a arte de criar experiências visuais que contam histórias. Do logotipo que representa a essência de uma marca a vídeos que capturam a atenção e engajam, meu trabalho é unir estética e funcionalidade.
+                    </p>
+                    <p class="text-lg leading-relaxed">
+                        Com mais de 5 anos de experiência, especializei-me em diversas áreas. Acredito que a combinação da criatividade com o conhecimento técnico é o que gera os melhores resultados. Meu objetivo é continuar aprimorando minhas habilidades em design e tecnologia para entregar projetos inovadores e impactantes.
+                    </p>
+                    <p class="text-lg leading-relaxed">
+                        Minha abordagem de trabalho é centrada no cliente e na solução de problemas. Através da colaboração e de um entendimento profundo das necessidades de cada projeto, busco sempre superar as expectativas e criar soluções que não apenas pareçam boas, mas que também funcionem perfeitamente.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-6 section-divider"></div>
+
+        <!-- Seção O que eu faço? -->
+        <section id="what-i-do" class="py-20 md:py-32">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl font-bold mb-12">O que eu faço?</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Item 1: Branding -->
+                    <div class="rounded-xl overflow-hidden shadow-lg card-bg card-hover p-6 flex flex-col items-center text-center">
+                        <div class="text-6xl mb-4 text-current">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <h3 class="text-xl font-medium">Branding Completo</h3>
+                        <p class="text-sm mt-2">Desenvolvimento de identidade visual, incluindo logomarca, paleta de cores, tipografia e diretrizes de marca para startups e empresas consolidadas. Meu foco é criar uma marca forte e memorável que ressoe com o público-alvo.</p>
+                    </div>
+                    <!-- Item 2: Vídeos -->
+                    <div class="rounded-xl overflow-hidden shadow-lg card-bg card-hover p-6 flex flex-col items-center text-center">
+                        <div class="text-6xl mb-4 text-current">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <h3 class="text-xl font-medium">Vídeos Promocionais</h3>
+                        <p class="text-sm mt-2">Criação e edição de vídeos com animações e efeitos visuais. Trabalho em todas as etapas, desde o roteiro e storyboard até a finalização, para garantir que a mensagem seja entregue de forma clara e impactante. Ideal para campanhas de marketing digital e apresentações corporativas.</p>
+                    </div>
+                    <!-- Item 3: Design Gráfico -->
+                    <div class="rounded-xl overflow-hidden shadow-lg card-bg card-hover p-6 flex flex-col items-center text-center">
+                        <div class="text-6xl mb-4 text-current">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3 class="text-xl font-medium">Design Gráfico</h3>
+                        <p class="text-sm mt-2">Criação de ilustrações personalizadas, artes para redes sociais, banners e materiais impressos. Minha abordagem é focada na estética e na usabilidade, garantindo que cada peça visual seja funcional e agradável aos olhos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-6 section-divider"></div>
+
+        <!-- Nova Seção de Habilidades -->
+        <section id="skills" class="py-20 md:py-32">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl font-bold mb-12">Minhas Habilidades</h2>
+                <div class="flex flex-wrap justify-center gap-8">
+                    <!-- Habilidade 1: Design Gráfico -->
+                    <div class="rounded-xl overflow-hidden shadow-lg card-bg card-hover p-6 flex flex-col items-center text-center w-full sm:w-1/2 lg:w-1/4">
+                        <div class="text-6xl mb-4 text-current">
+                            <i class="fas fa-drafting-compass"></i>
+                        </div>
+                        <h3 class="text-xl font-medium">Design Gráfico</h3>
+                        <p class="text-sm mt-2">Ferramentas: Adobe Photoshop, Illustrator, InDesign. Expertise em identidade visual, design para redes sociais e materiais impressos.</p>
+                    </div>
+                    <!-- Habilidade 2: Edição de Vídeo -->
+                    <div class="rounded-xl overflow-hidden shadow-lg card-bg card-hover p-6 flex flex-col items-center text-center w-full sm:w-1/2 lg:w-1/4">
+                        <div class="text-6xl mb-4 text-current">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3 class="text-xl font-medium">Edição de Vídeo</h3>
+                        <p class="text-sm mt-2">Ferramentas: Adobe Premiere Pro, After Effects. Habilidade em criar e editar vídeos profissionais, com motion graphics e efeitos visuais.</p>
+                    </div>
+                    <!-- Habilidade 3: UX/UI Design -->
+                    <div class="rounded-xl overflow-hidden shadow-lg card-bg card-hover p-6 flex flex-col items-center text-center w-full sm:w-1/2 lg:w-1/4">
+                        <div class="text-6xl mb-4 text-current">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3 class="text-xl font-medium">UX/UI Design</h3>
+                        <p class="text-sm mt-2">Ferramentas: Figma. Criação de protótipos de alta fidelidade e design de interfaces para web e mobile, com foco na experiência do usuário.</p>
+                    </div>
+                    <!-- Habilidade 4: Desenvolvimento Front-end -->
+                    <div class="rounded-xl overflow-hidden shadow-lg card-bg card-hover p-6 flex flex-col items-center text-center w-full sm:w-1/2 lg:w-1/4">
+                        <div class="text-6xl mb-4 text-current">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="text-xl font-medium">Desenvolvimento Front-end</h3>
+                        <p class="text-sm mt-2">Linguagens: HTML, CSS, JavaScript. Conhecimento em frameworks como Tailwind CSS para desenvolvimento de interfaces responsivas e de alto desempenho.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-6 section-divider"></div>
+
+        <!-- Seção de Contato -->
+        <section id="contact" class="py-20 md:py-32">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl font-bold mb-12">Vamos Conversar?</h2>
+                <p class="text-lg mb-10 max-w-xl mx-auto">
+                    Se você tem um projeto em mente ou quer apenas trocar uma ideia, estou disponível para colaborar. Meu e-mail é: nicolasfreelancercriativoo@gmail.com
+                </p>
+                <div class="flex flex-col items-center space-y-8">
+                    <a href="https://wa.me/5511978862120" target="_blank" class="flex items-center space-x-4">
+                        <i class="fab fa-whatsapp text-3xl"></i>
+                        <span class="text-xl font-medium">WhatsApp</span>
+                    </a>
+                    <a href="mailto:nicolasfreelancercriativoo@gmail.com" class="flex items-center space-x-4">
+                        <i class="fas fa-envelope text-3xl"></i>
+                        <span class="text-xl font-medium">Email</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/nicolas-oliveira-alves-72368934b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android%20app" target="_blank" class="flex items-center space-x-4">
+                        <i class="fab fa-linkedin-in text-3xl"></i>
+                        <span class="text-xl font-medium">LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rodapé (Footer) -->
+        <footer class="py-6 text-center text-gray-400">
+            <div class="container mx-auto px-6">
+                <p>&copy; 2024 Nicolas. Feito com design e código minimalista.</p>
+            </div>
+        </footer>
+
+    </div> <!-- Fim do content-container -->
+
+    <!-- JavaScript para a ambientação 3D e interatividade -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- 3D Scene Setup (Three.js) ---
+            const canvas = document.getElementById('three-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); // alpha: true para o fundo transparente
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Adiciona uma luz sutil para dar volume aos objetos
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 0.5);
+            pointLight.position.set(0, 50, 100);
+            scene.add(pointLight);
+
+            // Adiciona uma névoa mais forte para o efeito de desfoque/profundidade
+            const fogColor = new THREE.Color(getComputedStyle(document.body).backgroundColor);
+            scene.fog = new THREE.Fog(fogColor, 15, 100);
+
+            // Array para armazenar os objetos 3D e as partículas
+            const objects = [];
+            const particles = [];
+
+            // Função para criar formas 3D e adicioná-las à cena
+            function createObject(geometry, material, position, rotation) {
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(position.x, position.y, position.z);
+                mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+                scene.add(mesh);
+                objects.push(mesh);
+            }
+
+            // Criação das formas abstratas para os ícones
+            const offWhiteMaterial = new THREE.MeshStandardMaterial({
+                color: new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim()),
+                metalness: 0.1,
+                roughness: 0.8
+            });
+
+            const blackishMaterial = new THREE.MeshStandardMaterial({
+                color: new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim()),
+                metalness: 0.1,
+                roughness: 0.8
+            });
+
+            // Ícones de Programação e Tecnologia
+            const torusKnotGeometry = new THREE.TorusKnotGeometry(4, 1, 100, 16);
+            const boxGeometry = new THREE.BoxGeometry(6, 6, 6);
+
+            // Posições ajustadas para estarem mais distantes e no campo de visão do desfoque
+            createObject(boxGeometry, offWhiteMaterial, { x: 15, y: 10, z: -80 }, { x: 0.1, y: 0.2, z: 0 });
+            createObject(torusKnotGeometry, blackishMaterial, { x: -20, y: -15, z: -100 }, { x: 0.3, y: -0.1, z: 0 });
+            createObject(boxGeometry, offWhiteMaterial, { x: 5, y: -20, z: -120 }, { x: -0.2, y: 0.3, z: 0.1 });
+            createObject(torusKnotGeometry, blackishMaterial, { x: -10, y: 10, z: -140 }, { x: 0.5, y: 0.4, z: 0.2 });
+            createObject(boxGeometry, offWhiteMaterial, { x: 25, y: -5, z: -160 }, { x: 0.4, y: 0.1, z: 0.3 });
+
+            // --- Sistema de Partículas ---
+            const particleCount = 200;
+            const particleGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+            const particleMaterial = new THREE.MeshBasicMaterial({ color: offWhiteMaterial.color });
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+                particle.position.x = (Math.random() - 0.5) * 200;
+                particle.position.y = (Math.random() - 0.5) * 200;
+                particle.position.z = (Math.random() - 0.5) * 200 - 50; // Posiciona as partículas em uma área mais distante
+                particles.push(particle);
+                scene.add(particle);
+            }
+
+            camera.position.z = 5;
+
+            // Variáveis para a ilusão de ótica (movimento do mouse)
+            let mouseX = 0;
+            let mouseY = 0;
+
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            function onDocumentMouseMove(event) {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            }
+
+            function onDocumentTouchMove(event) {
+                if (event.touches.length === 1) {
+                    mouseX = (event.touches[0].pageX - windowHalfX);
+                    mouseY = (event.touches[0].pageY - windowHalfY);
+                }
+            }
+
+            document.addEventListener('mousemove', onDocumentMouseMove);
+            document.addEventListener('touchmove', onDocumentTouchMove);
+
+            // Animação e renderização da cena
+            function animate() {
+                requestAnimationFrame(animate);
+
+                targetX = mouseX * 0.0005;
+                targetY = mouseY * 0.0005;
+
+                // Movimento da câmera e rotação dos objetos
+                camera.position.x += (targetX - camera.position.x) * 0.05;
+                camera.position.y += (-targetY - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+
+                objects.forEach(obj => {
+                    obj.rotation.x += 0.001;
+                    obj.rotation.y += 0.001;
+                });
+
+                // Animação das partículas
+                particles.forEach(particle => {
+                    particle.position.y -= 0.05; // Faz as partículas "flutuarem" para cima
+                    if (particle.position.y < -100) { // Reposiciona a partícula quando ela sai da tela
+                        particle.position.y = 100;
+                        particle.position.x = (Math.random() - 0.5) * 200;
+                        particle.position.z = (Math.random() - 0.5) * 200 - 50;
+                    }
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            // Atualiza a cena e a câmera quando a janela é redimensionada
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            window.addEventListener('resize', onWindowResize);
+
+            // Inicia a animação
+            animate();
+
+            // --- Lógica de Interatividade do Site ---
+            // Menu de hambúrguer para celular
+            const menuButton = document.getElementById('menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            mobileMenu.querySelectorAll('a, button').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Smooth scroll para links de navegação
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Alternar Modo Claro/Escuro
+            const themeToggle = document.getElementById('theme-toggle');
+            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const mobileThemeIcon = document.getElementById('mobile-theme-icon');
+            const body = document.body;
+
+            function toggleTheme() {
+                body.classList.toggle('light-mode');
+                
+                // Atualiza a cor dos materiais 3D para combinar com o tema
+                const offWhiteColor = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim());
+                const blackishColor = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim());
+
+                objects.forEach(obj => {
+                    // Simplesmente inverte a cor dos objetos para simular a mudança de tema
+                    if (obj.material.color.getHex() === offWhiteMaterial.color.getHex()) {
+                        obj.material.color.set(blackishColor);
+                    } else {
+                        obj.material.color.set(offWhiteColor);
+                    }
+                });
+                
+                particles.forEach(p => {
+                     if (p.material.color.getHex() === offWhiteMaterial.color.getHex()) {
+                        p.material.color.set(blackishColor);
+                    } else {
+                        p.material.color.set(offWhiteColor);
+                    }
+                });
+
+                // Atualiza a cor da névoa para combinar com o novo fundo
+                const newFogColor = new THREE.Color(getComputedStyle(document.body).backgroundColor);
+                scene.fog.color.set(newFogColor);
+
+                if (body.classList.contains('light-mode')) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    mobileThemeIcon.classList.remove('fa-moon');
+                    mobileThemeIcon.classList.add('fa-sun');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    mobileThemeIcon.classList.remove('fa-sun');
+                    mobileThemeIcon.classList.add('fa-moon');
+                }
+            }
+
+            themeToggle.addEventListener('click', toggleTheme);
+            mobileThemeToggle.addEventListener('click', toggleTheme);
+        });
+    </script>
+</body>
+</html>

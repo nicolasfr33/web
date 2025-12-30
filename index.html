@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nicolas Oliveira - Portfolio & Currículo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0077B5; /* Azul LinkedIn */
+            --dark: #0a192f;
+            --accent: #64ffda;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--dark);
+            color: white;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, #0077B5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 100;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            margin: 15px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            background: var(--primary);
+            transform: scale(1.5);
+        }
+
+        .btn-start {
+            background: var(--primary);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
+        }
+
+        .btn-start:hover {
+            transform: scale(1.05);
+            background: #005f91;
+        }
+
+        .skill-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .scroll-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.6;
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 640px) {
+            h1 { font-size: 2.5rem !important; }
+            h2 { font-size: 1.5rem !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="nav-dots" id="navDots"></div>
+
+    <!-- Slide 1: Intro -->
+    <div class="slide active" id="slide0">
+        <div class="mb-6 opacity-0 translate-y-4" style="animation: fadeInUp 0.8s forwards 0.2s">
+            <span class="text-blue-400 font-semibold tracking-widest uppercase text-sm">Apresentação Profissional</span>
+        </div>
+        <h1 class="text-6xl md:text-8xl gradient-text mb-4">Nicolas Oliveira</h1>
+        <p class="text-xl md:text-2xl text-gray-400 max-w-2xl">Jovem Aprendiz | Criativo Digital | Liderança em Desenvolvimento</p>
+        <div class="mt-12">
+            <button onclick="nextSlide()" class="btn-start">Conhecer Perfil</button>
+        </div>
+    </div>
+
+    <!-- Slide 2: Objetivo Estratégico -->
+    <div class="slide" id="slide1">
+        <h2 class="text-4xl font-bold mb-8">Objetivo Estratégico</h2>
+        <div class="bg-white/5 p-8 rounded-3xl border border-white/10 max-w-3xl">
+            <p class="text-lg leading-relaxed text-gray-300">
+                Busco minha primeira oportunidade na <strong>Área Administrativa</strong>, unindo proatividade e organização. Sou um profissional híbrido: domino as ferramentas tradicionais de escritório e possuo o olhar criativo da era digital. Pronto para aprender, colaborar e gerar resultados desde o primeiro dia.
+            </p>
+        </div>
+    </div>
+
+    <!-- Slide 3: Experiência & Liderança -->
+    <div class="slide" id="slide2">
+        <h2 class="text-4xl font-bold mb-8">Liderança & Impacto Social</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl w-full">
+            <div class="bg-blue-900/20 p-6 rounded-2xl border border-blue-500/30 text-left">
+                <h3 class="text-blue-400 font-bold text-xl mb-2">Gestão de Equipes</h3>
+                <p class="text-gray-400 text-sm">Gerenciamento de grupos, planejamento de pautas e acompanhamento individual de membros.</p>
+            </div>
+            <div class="bg-blue-900/20 p-6 rounded-2xl border border-blue-500/30 text-left">
+                <h3 class="text-blue-400 font-bold text-xl mb-2">Comunicação e Mentoria</h3>
+                <p class="text-gray-400 text-sm">Foco em engajamento, resolução de conflitos e suporte para desenvolvimento pessoal.</p>
+            </div>
+            <div class="bg-blue-900/20 p-6 rounded-2xl border border-blue-500/30 text-left">
+                <h3 class="text-blue-400 font-bold text-xl mb-2">Organização de Eventos</h3>
+                <p class="text-gray-400 text-sm">Experiência em delegar tarefas, gerenciar logística e executar ações sociais de impacto.</p>
+            </div>
+            <div class="bg-blue-900/20 p-6 rounded-2xl border border-blue-500/30 text-left">
+                <h3 class="text-blue-400 font-bold text-xl mb-2">Proatividade Voluntária</h3>
+                <p class="text-gray-400 text-sm">Destaque na Igreja Videira como líder e mentor desde junho de 2025.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Tech Skills -->
+    <div class="slide" id="slide3">
+        <h2 class="text-4xl font-bold mb-12">Habilidades Técnicas</h2>
+        <div class="flex flex-wrap justify-center max-w-4xl">
+            <div class="m-4 group">
+                <div class="text-6xl mb-2 floating-icon">📊</div>
+                <p class="font-bold">Pacote Office</p>
+                <p class="text-xs text-blue-400">Excel / Word / PPT</p>
+            </div>
+            <div class="m-4 group">
+                <div class="text-6xl mb-2 floating-icon" style="animation-delay: 0.5s">🎨</div>
+                <p class="font-bold">Design & Social Media</p>
+                <p class="text-xs text-blue-400">Canva / Edição Visual</p>
+            </div>
+            <div class="m-4 group">
+                <div class="text-6xl mb-2 floating-icon" style="animation-delay: 1s">🎬</div>
+                <p class="font-bold">Edição de Vídeo</p>
+                <p class="text-xs text-blue-400">CapCut / Alight Motion</p>
+            </div>
+            <div class="m-4 group">
+                <div class="text-6xl mb-2 floating-icon" style="animation-delay: 1.5s">🌐</div>
+                <p class="font-bold">Google Workspace</p>
+                <p class="text-xs text-blue-400">Colaboração Online</p>
+            </div>
+        </div>
+        <div class="mt-12 flex flex-wrap justify-center">
+            <span class="skill-tag">Inglês Intermediário</span>
+            <span class="skill-tag">Negociação e Vendas</span>
+            <span class="skill-tag">Mentoria</span>
+            <span class="skill-tag">Resolutividade</span>
+        </div>
+    </div>
+
+    <!-- Slide 5: Formação & Cursos -->
+    <div class="slide" id="slide4">
+        <h2 class="text-4xl font-bold mb-8">Educação e Qualificações</h2>
+        <div class="text-left max-w-2xl w-full space-y-6">
+            <div class="border-l-4 border-blue-500 pl-6 py-2">
+                <p class="text-blue-400 font-semibold">2025 (Cursando)</p>
+                <h4 class="text-xl font-bold">2º Ano Ensino Médio</h4>
+                <p class="text-gray-400">Escola Zilton Bicudo</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white/5 p-4 rounded-xl">
+                    <p class="text-xs text-blue-400">Evoloo</p>
+                    <p class="font-bold">Desenvolvimento Lógico</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-xl">
+                    <p class="text-xs text-blue-400">Hayah Move</p>
+                    <p class="font-bold">Empregabilidade</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-xl">
+                    <p class="text-xs text-blue-400">Liderança</p>
+                    <p class="font-bold">Curso de Treinamento (CTL)</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-xl">
+                    <p class="text-xs text-blue-400">Idioma</p>
+                    <p class="font-bold">CNA (Inglês)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Call to Action -->
+    <div class="slide" id="slide5">
+        <h2 class="text-4xl md:text-6xl font-extrabold mb-6">Vamos conversar?</h2>
+        <p class="text-xl text-gray-400 mb-12">Estou pronto para fazer a diferença na sua empresa.</p>
+        
+        <div class="space-y-4 w-full max-w-md">
+            <a href="mailto:nicolasfreelancercriativoo@gmail.com" class="block bg-white/10 hover:bg-white/20 p-4 rounded-2xl border border-white/10 transition">
+                <span class="block text-xs text-gray-500 uppercase">E-mail</span>
+                <span class="font-semibold">nicolasfreelancercriativoo@gmail.com</span>
+            </a>
+            <div class="block bg-white/10 p-4 rounded-2xl border border-white/10">
+                <span class="block text-xs text-gray-500 uppercase">Localização</span>
+                <span class="font-semibold">Lago Azul, SP</span>
+            </div>
+            <div class="block bg-white/10 p-4 rounded-2xl border border-white/10">
+                <span class="block text-xs text-gray-500 uppercase">WhatsApp</span>
+                <span class="font-semibold">11 96448-2658</span>
+            </div>
+        </div>
+
+        <button onclick="goToSlide(0)" class="mt-12 text-sm text-blue-400 hover:underline">Reiniciar Apresentação</button>
+    </div>
+
+    <div class="scroll-hint" id="scrollHint">Use as setas ou deslize para navegar</div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 6;
+        const progressBar = document.getElementById('progressBar');
+        const navDots = document.getElementById('navDots');
+
+        // Initialize dots
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = `dot ${i === 0 ? 'active' : ''}`;
+            dot.onclick = () => goToSlide(i);
+            navDots.appendChild(dot);
+        }
+
+        function updateProgress() {
+            const progress = (currentSlide / (totalSlides - 1)) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Update dots
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+
+            // Hide scroll hint on last slide
+            document.getElementById('scrollHint').style.display = (currentSlide === totalSlides - 1) ? 'none' : 'block';
+        }
+
+        function goToSlide(index) {
+            document.getElementById(`slide${currentSlide}`).classList.remove('active');
+            currentSlide = index;
+            document.getElementById(`slide${currentSlide}`).classList.add('active');
+            updateProgress();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                goToSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                goToSlide(currentSlide - 1);
+            }
+        }
+
+        // Navigation Events
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Touch Navigation
+        let touchStartY = 0;
+        window.addEventListener('touchstart', e => touchStartY = e.touches[0].clientY);
+        window.addEventListener('touchend', e => {
+            const touchEndY = e.changedTouches[0].clientY;
+            if (touchStartY - touchEndY > 50) nextSlide();
+            if (touchEndY - touchStartY > 50) prevSlide();
+        });
+
+        // Mouse Wheel
+        let lastWheel = Date.now();
+        window.addEventListener('wheel', e => {
+            if (Date.now() - lastWheel < 1000) return;
+            if (e.deltaY > 0) nextSlide();
+            else prevSlide();
+            lastWheel = Date.now();
+        });
+
+        // Fade In Animation for Slide 1
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+    </script>
+</body>
+</html>
+
